@@ -279,3 +279,61 @@ def pagerank_gauss_seidel():
     for source, destination in edges:
         if not (0 <= source < n and 0 <= destination < n):
             raise ValueError("Invalid page index")
+
+        
+        out_degree[source] += 1
+
+    # Build a list of incoming links for each page
+    incoming = [[] for _ in range(n)]
+
+    for source, destination in edges:
+        incoming[destination].append(source)
+
+    # Initial PageRank vector
+    rank = np.ones(n) / n
+
+    # Gauss-Seidel iteration
+    for iteration in range(max_iterations):
+
+        old_rank = rank.copy()
+
+        for page in range(n):
+
+            link_sum = 0.0
+
+            for source in incoming[page]:
+                link_sum += rank[source] / out_degree[source]
+
+            rank[page] = (
+                alpha * link_sum
+                + (1 - alpha) / n
+            )
+
+        # Check convergence
+        error = np.max(np.abs(rank - old_rank))
+
+        if error < tolerance:
+            break
+
+    print("\nGauss-Seidel PageRank")
+    print("Number of iterations:", iteration + 1)
+
+    for page, score in enumerate(rank, start=1):
+        print(f"Page {page}: {score:.6f}")
+
+    print("Probability sum:", np.sum(rank))
+    print("Final error:", error)
+
+
+# ==========================================
+# RUN ALL ASSIGNMENT PARTS
+# ==========================================
+
+solve_q3()
+
+iteration_complexity()
+
+memory_comparison()
+
+pagerank_gauss_seidel()
+        
